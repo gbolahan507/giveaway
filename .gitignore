@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# Java / Maven
+target/
+*.log
+
+# Flutter (for app/ later)
+.dart_tool/
+build/
+.flutter-plugins*
+*.iml
+
+# Secrets — never commit real credentials
+.env
+*.env.local
+application-local.properties

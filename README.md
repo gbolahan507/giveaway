@@ -30,8 +30,8 @@ erDiagram
 
 Read each relationship both ways:
 
-- A user **posts** many items — an item **is posted by** exactly one user.
-- A user **claims** many items — an item **is claimed by** at most one user.
+- A user **posts** one or many items — an item **is posted by** exactly one user.
+- A user **claims** one or many items — an item **is claimed by** at most one user.
 
 That second sentence is where the nullable columns come from: an item must have a
 poster, but may have no claimer. A null `claimed_by` *is* "available".

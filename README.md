@@ -2,8 +2,8 @@
 
 ```mermaid
 erDiagram
-    USERS ||--o{ ITEMS : posts
-    USERS ||--o{ ITEMS : claims
+    USERS |--o{ ITEMS : posts
+    USERS |--o{ ITEMS : claims
 
     USERS {
         uuid id PK

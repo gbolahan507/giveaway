@@ -83,4 +83,43 @@ class ClaimConcurrencySpec extends Specification {
         cleanup:
         pool.shutdown()
     }
+
+
+    def "the same user claiming twice at once gets two successes, not a conflict"() {
+        given: "one claimer, racing themselves"
+        def start = new CountDownLatch(1)
+        def pool = Executors.newFixedThreadPool(2)
+        def claimer = userIds[1]
+
+        when: "both of their requests arrive at the same instant"
+        def futures = (1..2).collect {
+            pool.submit({
+                start.await()
+                itemService.claim(itemId, claimer)
+            } as Callable)
+        }
+        start.countDown()
+
+        def outcomes = futures.collect { future ->
+            try {
+                future.get(5, TimeUnit.SECONDS)
+            } catch (ExecutionException e) {
+                e.cause
+            }
+        }
+
+        then: "both are told they own it"
+        outcomes.count { it instanceof ItemDetail } == 2
+        outcomes.count { it instanceof ItemAlreadyClaimedException } == 0
+
+        and: "they are the owner, and the item is claimed"
+        def saved = itemRepository.findWithUsersById(itemId).get()
+        saved.claimedBy.id == claimer
+        saved.status == ItemStatus.CLAIMED
+
+        cleanup:
+        pool.shutdown()
+    }
+
+
 }

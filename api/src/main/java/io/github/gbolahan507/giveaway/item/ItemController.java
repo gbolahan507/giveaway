@@ -27,7 +27,7 @@ public class ItemController {
             @RequestHeader("Giveaway-User-Id") UUID userId, @Valid @RequestBody CreateItemRequest request ) {
 
         ItemDetail created = itemService.post(request, userId);
-        return ResponseEntity.created(URI.create("/items/L" + created.id())).body(created);
+        return ResponseEntity.created(URI.create("/items/" + created.id())).body(created);
     }
 
 

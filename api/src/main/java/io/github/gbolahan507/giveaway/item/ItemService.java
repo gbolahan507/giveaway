@@ -39,6 +39,7 @@ public class ItemService {
         if (existing.getPostedBy().getId().equals(userId)) {
             throw new CannotClaimOwnItemException(itemId);                      // 403
         }
+
         if (existing.getClaimedBy() != null
                 && existing.getClaimedBy().getId().equals(userId)) {
             return ItemDetail.from(existing, userId);                           // 200, idempotent
@@ -54,8 +55,16 @@ public class ItemService {
 
 
         if (updated == 0) {
+                Item current = itemRepository.findWithUsersById(itemId)
+                        .orElseThrow(() -> new ItemNotFoundException(itemId));
+
+                if(current.getClaimedBy() != null && current.getClaimedBy().getId().equals(userId)){
+                    return ItemDetail.from(current, userId);
+                }
+
             throw new ItemAlreadyClaimedException(itemId);                      // 409
         }
+
 
         return ItemDetail.from(
                 itemRepository.findWithUsersById(itemId).orElseThrow(), userId);
